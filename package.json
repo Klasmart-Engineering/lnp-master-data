@@ -1,0 +1,32 @@
+{
+  "name": "lnp-master-data",
+  "version": "1.0.0",
+  "main": "./lib/index.js",
+  "typings": "./lib/index.d.ts",
+  "license": "private",
+  "scripts": {
+    "build": "tsc",
+    "test": "jest",
+    "master": "ts-node ./master-data-generator/index.ts"
+  },
+  "files": [
+    "lib"
+  ],
+  "devDependencies": {
+    "@types/jest": "*",
+    "dotenv": "^14.2.0",
+    "elementtree": "^0.1.7",
+    "jest": "*",
+    "node-svn-ultimate": "^1.2.1",
+    "shelljs": "^0.8.5",
+    "sqlite": "^4.0.23",
+    "sqlite3": "^5.0.2",
+    "ts-jest": "*",
+    "ts-node": "^10.4.0",
+    "typescript": "*"
+  },
+  "dependencies": {
+    "mongodb": "^4.3.1",
+    "mysql2": "^2.3.3"
+  }
+}
