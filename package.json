@@ -3,10 +3,10 @@
   "version": "1.0.0",
   "main": "./lib/index.js",
   "typings": "./lib/index.d.ts",
-  "license": "private",
   "scripts": {
     "build": "tsc",
     "test": "jest",
+    "clean": "rm -rf ./node_modules ./.build_master-data",
     "master": "ts-node ./master-data-generator/index.ts"
   },
   "files": [
@@ -28,5 +28,8 @@
   "dependencies": {
     "mongodb": "^4.3.1",
     "mysql2": "^2.3.3"
+  },
+  "publishConfig": {
+    "registry": "https://kidsloop.jfrog.io/artifactory/api/npm/default-npm-local/"
   }
 }
