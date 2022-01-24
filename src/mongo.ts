@@ -238,6 +238,26 @@ export class MasterDataMongo implements IMasterData {
     return esl_reward[mid];
   }
 
+  public async getAllEslRewards(): Promise<EslReward[]> {
+    const collection = await this.getCollection();
+    const {
+      data: { esl_reward },
+    } = await collection.findOne(
+      { versionCode: this.versionCode },
+      {
+        projection: {
+          data: {
+            esl_reward: 1,
+          },
+        },
+      }
+    );
+
+    return Object.keys(esl_reward).map((key) => {
+      return esl_reward[key];
+    });
+  }
+
   public async getAllEslLessonPages(): Promise<EslLessonPage[]> {
     const collection = await this.getCollection();
     const {

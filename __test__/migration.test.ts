@@ -183,6 +183,16 @@ describe("#MasterData migration from mysql to mongo", () => {
     expect(mongoResult).toEqual(sqlResult);
   });
 
+  it.only("#getAllEslRewards", async () => {
+    const mongoResult = await masterDataInstanceMongo.getAllEslRewards();
+
+    const sqlResult = await masterDataInstanceMySql.getAllEslRewards();
+
+    console.log({ mongoResult, sqlResult });
+
+    expect(mongoResult).toEqual(sqlResult);
+  });
+
   it("#getContent", async () => {
     const mId = 10111030006;
     const mongoResult = await masterDataInstanceMongo.getContent(mId);

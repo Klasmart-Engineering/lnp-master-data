@@ -10,6 +10,8 @@ export interface IMasterData {
   getTalkLessonType(mid: string): Promise<TalkLessonType>;
   getContent(mid: number): Promise<Content>;
   getEslReward(mid: number): Promise<EslReward>;
+  getAllEslRewards(): Promise<EslReward[]>;
+  getEslRewardCount(): Promise<number>;
   getAllEslLessonPages(): Promise<EslLessonPage[]>;
   getEslLessonPage(mid: string): Promise<EslLessonPage | null>;
   getGeniusTopic(mid: number): Promise<GeniusTopic>;
@@ -19,7 +21,6 @@ export interface IMasterData {
   getSong(mid: number): Promise<Song>;
   getMediaboxSong(mid: number): Promise<MediaboxSong>;
   getAppIdentification(mid: string): Promise<AppIdentification>;
-  getEslRewardCount(): Promise<number>;
   getEslLesson(mid: string): Promise<EslLesson>;
   getAllEslLessons(): Promise<EslLesson[]>;
   getEslLessonMidByProfileLevel(level: eProfileLevel): Promise<string>;

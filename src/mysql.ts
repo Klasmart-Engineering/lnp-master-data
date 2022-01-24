@@ -142,6 +142,11 @@ export class MasterDataMySql implements IMasterData {
 
     return rows[0];
   }
+  public async getAllEslRewards(): Promise<EslReward[]> {
+    const { rows } = await this.query(`select * from esl_reward`);
+
+    return rows as EslReward[];
+  }
   public async getAllEslLessonPages(): Promise<EslLessonPage[]> {
     const { rows } = await this.query(`select * from esl_lesson_page`);
 
