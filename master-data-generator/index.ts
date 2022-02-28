@@ -70,6 +70,8 @@ const main = async () => {
   const generateGo = false;
   const generateJs = false;
   const generateTs = false;
+  const enabledMongoDB = process.env.MONGODB_URL !== undefined;
+  console.log(`MongoDB Upload enabled: ${enabledMongoDB}`);
 
   const {
     aTableNames,
@@ -90,33 +92,35 @@ const main = async () => {
     mstDataAll,
   });
 
-  const mstESL: EslLessonPage[] = _.map(
-    Object.keys(mstDataServer.esl_lesson_page),
-    (key) => {
-      return mstDataServer.esl_lesson_page[key];
-    }
-  );
+  if (enabledMongoDB) {
+    const mstESL: EslLessonPage[] = _.map(
+      Object.keys(mstDataServer.esl_lesson_page),
+      (key) => {
+        return mstDataServer.esl_lesson_page[key];
+      }
+    );
 
-  const lessons = _.map(Object.keys(mstDataServer.esl_lesson), (key) => {
-    return mstDataServer.esl_lesson[key];
-  }) as EslLesson[];
+    const lessons = _.map(Object.keys(mstDataServer.esl_lesson), (key) => {
+      return mstDataServer.esl_lesson[key];
+    }) as EslLesson[];
 
-  await uploadToMongoDB({
-    versionCode: timestamp.toString(),
-    mstESL,
-    lessons,
-    mstDataServer,
-    serverParam: {
-      url: process.env.MONGODB_URL,
-      dbName: process.env.MONGODB_DB_NAME,
-      collectionName: process.env.MONGODB_COLLECTION_MASTER,
-    },
-    exServerParam: {
-      url: process.env.MONGODB_URL,
-      dbName: process.env.MONGODB_DB_NAME,
-      collectionName: process.env.MONGODB_COLLECTION_EXTENSION,
-    },
-  });
+    await uploadToMongoDB({
+      versionCode: timestamp.toString(),
+      mstESL,
+      lessons,
+      mstDataServer,
+      serverParam: {
+        url: process.env.MONGODB_URL,
+        dbName: process.env.MONGODB_DB_NAME,
+        collectionName: process.env.MONGODB_COLLECTION_MASTER,
+      },
+      exServerParam: {
+        url: process.env.MONGODB_URL,
+        dbName: process.env.MONGODB_DB_NAME,
+        collectionName: process.env.MONGODB_COLLECTION_EXTENSION,
+      },
+    });
+  }
 
   // const targetTableName = `master-data-${timestamp}`;
 
