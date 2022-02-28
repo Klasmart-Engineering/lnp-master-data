@@ -3,3 +3,10 @@ lib
 .env
 *.log
 .build-master-data
+.secrets*
+
+.github/*.json
+workflow/
+
+.ansible*
+ansible/inventory.yaml

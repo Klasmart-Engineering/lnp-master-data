@@ -1,0 +1,81 @@
+name: LNP Master Data automation pipeline
+
+on:
+  push:
+    branches:
+      - should_be_manually_triggered
+  workflow_dispatch:
+    inputs:
+      svn-path:
+        description: Master Data Path
+        required: false
+        default: svn/learnandplay/trunk/master_data
+      env:
+        type: choice
+        description: 'Target Environment'
+        required: true
+        options: 
+        - dev
+        - qa
+        - prod
+        default: 'dev'
+env:
+  ACTIONS_ALLOW_UNSECURE_COMMANDS: true
+  SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+jobs:
+  deployment:
+    runs-on: ubuntu-latest
+    environment: 
+      name: ${{ github.event.inputs.env }}
+
+    steps:
+    - uses: act10ns/slack@v1.5.1
+      with:
+        message: Deploying Master Data for ${{ github.event.inputs.env }} environment.
+        status: starting
+      if: ${{ !env.ACT }}
+
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Render Inventory File
+      id: render_template
+      uses: chuhlomin/render-template@v1.4
+      with:
+        template: ansible/inventory.template.yaml
+        vars: |
+          ANSIBLE_HOST: ${{ secrets.ANSIBLE_HOST }}
+          ANSIBLE_PORT: ${{ secrets.ANSIBLE_PORT }}
+          ANSIBLE_USER: ${{ secrets.ANSIBLE_USER }}
+          ANSIBLE_PASSWORD: ${{ secrets.ANSIBLE_PASSWORD }}
+          ANSIBLE_KUBERNETES_CONTEXT: ${{ secrets.ANSIBLE_KUBERNETES_CONTEXT }}
+          ANSIBLE_LNP_KUBERNETES_NAMESPACE: ${{ secrets.ANSIBLE_LNP_KUBERNETES_NAMESPACE }}
+          ANSIBLE_LNP_DEPLOYMENT: ${{ secrets.ANSIBLE_LNP_DEPLOYMENT }}
+          ANSIBLE_MYSQL_KUBERNETES_NAMESPACE: ${{ secrets.ANSIBLE_MYSQL_KUBERNETES_NAMESPACE }}
+          ANSIBLE_MYSQL_POD_NAME: ${{ secrets.ANSIBLE_MYSQL_POD_NAME }}
+          ANSIBLE_MYSQL_USER: ${{ secrets.ANSIBLE_MYSQL_USER }}
+          ANSIBLE_MYSQL_PASS: ${{ secrets.ANSIBLE_MYSQL_PASS }}
+          ANSIBLE_MYSQL_DATABASE: ${{ secrets.ANSIBLE_MYSQL_DATABASE }}
+          ANSIBLE_SVN_PATH: ${{ github.event.inputs.svn-path }}
+        result_path: ansible/inventory.yaml
+
+    - name: Debug Template
+      run: |
+        cat ansible/inventory.yaml
+
+    - name: Run playbook
+      id: run_playbook
+      uses: dawidd6/action-ansible-playbook@v2.5.0
+      with:
+        # Required, playbook filepath
+        playbook: ansible/master-data.yaml
+        options: |
+          --inventory ansible/inventory.yaml
+          --verbose
+
+    - uses: act10ns/slack@v1.5.1
+      with:
+        status: ${{ job.status }}
+        steps: ${{ toJson(steps) }}
+      if: ${{ !env.ACT }}

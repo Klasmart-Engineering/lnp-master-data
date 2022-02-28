@@ -1,0 +1,25 @@
+all:
+  hosts:
+    masterdata:
+      ansible_host: {{ .ANSIBLE_HOST }}
+      ansible_port: {{ .ANSIBLE_PORT }}
+      ansible_user: {{ .ANSIBLE_USER }}
+      ansible_password: {{ .ANSIBLE_PASSWORD }}
+      ansible_python_interpreter: /usr/bin/python3
+
+      lnp_directory: /home/calmisland/lnp-master-data
+      bashrc_path: /home/calmisland/.bashrc
+      kubernetes_context: {{ .ANSIBLE_KUBERNETES_CONTEXT }}
+      
+      lnp_kubernetes_namespace: {{ .ANSIBLE_LNP_KUBERNETES_NAMESPACE }}
+      lnp_deployment: {{ .ANSIBLE_LNP_DEPLOYMENT }}
+
+      mysql_kubernetes_namespace: {{ .ANSIBLE_MYSQL_KUBERNETES_NAMESPACE }}
+      mysql_pod_name: {{ .ANSIBLE_MYSQL_POD_NAME }}
+      mysql_user: {{ .ANSIBLE_MYSQL_USER }}
+      mysql_pass: {{ .ANSIBLE_MYSQL_PASS }}
+      mysql_database: {{ .ANSIBLE_MYSQL_DATABASE }}
+
+      ENVS:
+        SVN_HOSTNAME: file:///data2
+        SVN_PATHNAME: {{ .ANSIBLE_SVN_PATH }}

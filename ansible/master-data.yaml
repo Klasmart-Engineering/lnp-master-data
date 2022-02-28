@@ -1,0 +1,29 @@
+- name: Update master-data
+  hosts: masterdata
+  remote_user: "{{ ansible_user }}"
+  tasks:
+    - name: Fetch master-data
+      environment: "{{ ENVS }}"
+      shell:
+        cmd: "source {{ bashrc_path }} && yarn master"
+        chdir: "{{ lnp_directory }}"
+      args:
+        executable: /bin/bash
+      register: extract_result
+
+    - name: for debugging the destination directory path
+      debug: 
+        msg: "the destination directory path: {{ extract_result.stdout_lines[7] }}"
+
+    - name: Inject into mysql instance
+      shell:
+        cmd: "source {{ bashrc_path }} && kubectl config use-context {{ kubernetes_context }} && kubectl -n {{ mysql_kubernetes_namespace }} exec -i {{ mysql_pod_name }} -- mysql -u {{ mysql_user }} -p{{ mysql_pass }} {{ mysql_database }}< master_data.sql"
+        chdir: "{{ lnp_directory }}/{{ extract_result.stdout_lines[7] }}"
+      args:
+        executable: /bin/bash
+
+    - name: Restart Leand and Play Deployment
+      shell:
+        cmd: "source {{ bashrc_path }} && kubectl config use-context {{ kubernetes_context }} && kubectl -n {{ lnp_kubernetes_namespace }} rollout restart deployment/{{ lnp_deployment }}"
+      args:
+        executable: /bin/bash
