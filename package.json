@@ -20,7 +20,7 @@
     "node-svn-ultimate": "^1.2.1",
     "shelljs": "^0.8.5",
     "sqlite": "^4.0.23",
-    "sqlite3": "^5.0.2",
+    "sqlite3": "^5.1.5",
     "ts-jest": "*",
     "ts-node": "^10.4.0",
     "typescript": "*"
